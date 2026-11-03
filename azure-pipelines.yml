@@ -58,7 +58,7 @@ steps:
 - bash: |
     ./bridge-cli-bundle-linux64/bridge-cli --stage polaris \
       polaris.serverUrl=$(POLARIS_SERVER_URL) \
-      polaris.accessToken=$(POLARIS_ACCESS_TOKEN) \
+      polaris.accessToken="s4jpgckfat47f3dcaebrc486lgcfic6upuikm3588il4gnsbqpthj6u2mdae5tm1rh5gade1tkifs" \
       polaris.application.name=gaja-impl-app \
       polaris.project.name=java-sec-azure-pipeline \
       polaris.branch.name=Polaris-testing \

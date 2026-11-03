@@ -13,7 +13,7 @@ variables:
 - name: POLARIS_APP_NAME
   value: gaja-impl-app
 - name: POLARIS_PROJECT
-  value: java-sec-azure-pipeline
+  value: WebGoat
 - name: POLARIS_BRANCH
   value: Polaris-testing
 - name: COVERITY_BUILD_COMMAND
@@ -53,14 +53,14 @@ steps:
     unzip -qo bridge.zip
     chmod +x bridge-cli-bundle-linux64/bridge-cli
   displayName: Download Polaris Bridge CLI
- 
+
 # ✅ Run Polaris Scan (SAST + SCA)
 - bash: |
     ./bridge-cli-bundle-linux64/bridge-cli --stage polaris \
       polaris.serverUrl=$(POLARIS_SERVER_URL) \
-      polaris.accessToken= $(POLARIS_ACCESS_TOKEN) \
+      polaris.accessToken=$(POLARIS_ACCESS_TOKEN) \
       polaris.application.name=gaja-impl-app \
-      polaris.project.name=java-sec-azure-pipeline \
+      polaris.project.name=WebGoat \
       polaris.branch.name=Polaris-testing \
       polaris.assessment.types=SAST,SCA \
       polaris.waitForScan=true \

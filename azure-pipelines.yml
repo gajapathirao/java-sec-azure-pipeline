@@ -11,9 +11,9 @@ variables:
 - name: POLARIS_SERVER_URL
   value: https://poc.polaris.blackduck.com
 - name: POLARIS_APP_NAME
-  value: Nirmal_SCM
+  value: gaja-impl-app
 - name: POLARIS_PROJECT
-  value: WebGoat
+  value: java-sec-azure-pipeline
 - name: POLARIS_BRANCH
   value: Polaris-testing
 - name: COVERITY_BUILD_COMMAND
@@ -59,8 +59,8 @@ steps:
     ./bridge-cli-bundle-linux64/bridge-cli --stage polaris \
       polaris.serverUrl=$(POLARIS_SERVER_URL) \
       polaris.accessToken=$(POLARIS_ACCESS_TOKEN) \
-      polaris.application.name=NIRMAL_SCM \
-      polaris.project.name=WebGoat \
+      polaris.application.name=gaja-impl-app \
+      polaris.project.name=java-sec-azure-pipeline \
       polaris.branch.name=Polaris-testing \
       polaris.assessment.types=SAST,SCA \
       polaris.waitForScan=true \

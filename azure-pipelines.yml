@@ -1,17 +1,34 @@
-- task: JavaToolInstaller@0
- inputs:
-   versionSpec: '25'
-   jdkArchitectureOption: 'x64'
-   jdkSourceOption: 'PreInstalled'
-- script: |
-   java -version
-   javac -version
- displayName: Verify Java 25
-- task: BlackDuckSecurityScan@2
- displayName: Polaris SAST and SCA Scan
- inputs:
-   scanType: polaris
-   polarisServerUrl: $(POLARIS_SERVER_URL)
-   polarisAccessToken: $(POLARIS_ACCESS_TOKEN)
-   polarisAssessmentTypes: SAST,SCA
-   polarisApplicationName: gaja-impl-app
+trigger:
+  - Polaris-testing
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: Gaja-secret
+
+steps:
+  - task: JavaToolInstaller@0
+    displayName: Install Java
+    inputs:
+      versionSpec: '25'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
+  - bash: |
+      mvn --version
+      java -version
+      mvn spotless:apply
+      mvn -N wrapper:wrapper
+      ./mvnw spotless:apply
+    displayName: Build and Format
+
+  - task: BlackDuckSecurityScan@2
+    displayName: Polaris SAST and SCA Scan
+    inputs:
+      scanType: polaris
+      polarisServerUrl: $(POLARIS_SERVER_URL)
+      polarisAccessToken: $(POLARIS_ACCESS_TOKEN)
+      polarisAssessmentTypes: SAST,SCA
+      polarisTestScaType: SCA-PACKAGE,SCA-SIGNATURE
+      polarisApplicationName: gaja-impl-app

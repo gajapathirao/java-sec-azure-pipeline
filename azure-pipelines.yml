@@ -1,34 +1,57 @@
 trigger:
-  - Polaris-testing
+- Polaris-testing
 
 pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: Gaja-secret
+- group: Gaja-secret   # Contains POLARIS_TOKEN securely
+
+# Static values (same as Jenkinsfile)
+- name: POLARIS_SERVER_URL
+  value: https://poc.polaris.blackduck.com
+- name: POLARIS_APP_NAME
+  value: gaja-impl-app
+- name: POLARIS_PROJECT
+  value: WebGoat
+- name: POLARIS_BRANCH
+  value: Polaris-testing
+- name: COVERITY_BUILD_COMMAND
+  value: >
+    mvn clean compile
+    -DskipTests
+    -DskipITs
+    -Dmaven.test.skip=true
+    -Dgpg.skip=true
 
 steps:
-  - task: JavaToolInstaller@0
-    displayName: Install Java
-    inputs:
-      versionSpec: '25'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
 
-  - bash: |
-      mvn --version
-      java -version
-      mvn spotless:apply
-      mvn -N wrapper:wrapper
-      ./mvnw spotless:apply
-    displayName: Build and Format
+# ✅ Checkout source
+- checkout: self
+  clean: true
 
-  - task: BlackDuckSecurityScan@2
-    displayName: Polaris SAST and SCA Scan
-    inputs:
-      scanType: polaris
-      polarisServerUrl: $(POLARIS_SERVER_URL)
-      polarisAccessToken: $(POLARIS_ACCESS_TOKEN)
-      polarisAssessmentTypes: SAST,SCA
-      polarisTestScaType: SCA-PACKAGE,SCA-SIGNATURE
-      polarisApplicationName: gaja-impl-app
+# ✅ Install Java 17
+- task: JavaToolInstaller@0
+  displayName: Install Java 17
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: x64
+    jdkSourceOption: PreInstalled
+
+# ✅ Install Maven 3.9.11
+- task: Maven@4
+  displayName: Validate Maven installation
+  inputs:
+    mavenVersionOption: SpecificVersion
+    mavenVersion: 3.9.11
+    goals: '--version'
+
+- task: BlackDuckSecurityScan@2
+  displayName: Polaris SAST and SCA Scan
+  inputs:
+    scanType: polaris
+    polarisServerUrl: $(POLARIS_SERVER_URL)
+    polarisAccessToken: $(POLARIS_ACCESS_TOKEN)
+    polarisAssessmentTypes: SAST,SCA
+    polarisTestScaType: SCA-PACKAGE,SCA-SIGNATURE
+    polarisApplicationName: gaja-impl-app
